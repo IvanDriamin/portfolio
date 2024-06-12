@@ -1,0 +1,77 @@
+#include <iostream>
+#include <locale.h>
+#include <windows.h>
+#include <string>
+#include <algorithm>
+int main() {
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	std::string s;
+	std::cout << "Введите, кодируемое сообщение: ";
+	std::cin >> s;
+	std::string s_new = s;
+	int n = int(s.size());
+	int k = 1;
+	while (n + k + 1 > pow(2, k))
+		k++;
+	for (int i = 0; i < k; i++)
+		s_new = s_new + "0";
+	int j = 0;
+	for (int i = 0; i < k + n; i++) {
+		if (i == 0 or i == 1 or i == 3 or i == 7 or i == 15)
+			s_new[i] = '0';
+		else {
+			s_new[i] = s[j];
+			j++;
+		}
+	}
+
+	int s1 = 0;
+	for (int i = 2; i < n + k;) {
+		s1 = s1 + int(s_new[i]);
+		i += 2;
+	}
+	if (s1 % 2 != 0)
+		s_new[0] = '1';
+
+	int s2 = int(s_new[2]);
+	for (int i = 5; i <= n + k;) {
+		s2 = s2 + int(s_new[i]) + int(s_new[i + 1]);
+		if (i + 1 > n + k)
+			s2 = s2 - int(s_new[i + 1]);
+		i += 4;
+	}
+	if (s2 % 2 != 0)
+		s_new[1] = '1';
+
+	int s3 = 0;
+	int h = 1;
+	for (int i = 4; i < n + k; i++) {
+		s3 = s3 + int(s_new[i]);
+		h++;
+		if (h == 4) {
+			h = 0;
+			i += 5;
+		}
+	}
+	if (s3 % 2 != 0)
+		s_new[3] = '1';
+
+	int s4 = 0;
+	for (int i = 8; i < 15 && i < n + k; i++)
+		s4 = s4 + int(s_new[i]);
+	if (s4 % 2 != 0)
+		s_new[7] = '1';
+
+	int s5 = 0;
+	for (int i = 16; i < 31 && i < n + k; i++)
+		s5 = s5 + int(s_new[i]);
+	if (s5 % 2 != 0)
+		s_new[15] = '1';
+	std::cout << "Код Хэмминга: " << s_new << std::endl;
+	std::cout << "1 контрольный бит: " << s_new[0] << std::endl;
+	std::cout << "2 контрольный бит: " << s_new[1] << std::endl;
+	std::cout << "3 контрольный бит: " << s_new[3] << std::endl;
+	std::cout << "4 контрольный бит: " << s_new[7] << std::endl;
+	std::cout << "5 контрольный бит: " << s_new[15] << std::endl;
+}
